@@ -1,0 +1,300 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model InvoiceModel
+@using System.Web.Mvc;
+<h2>Create Invoice</h2>
+
+<form method="post" asp-action="InvoiceSave" enctype="multipart/form-data">
+    <div class="row">
+        <div class="form-group col-3">
+            <label asp-for="Id" class="control-label"></label>
+            <input asp-for="Id" class="form-control" />
+            <span asp-validation-for="Id" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-3">
+            <label asp-for="CustomerId" class="control-label">Customer</label>
+            <input asp-for="CustomerId" type="text" id="autocompleteInput" class="form-control" placeholder="Customer Name">
+            <div id="dropdown-menu" class="dropdown-menu"></div>
+
+          @*   <input class="form-control basicAutoComplete" type="text"
+                   data-url="api/customer/search?term=${encodeURIComponent(qry.term)"
+                   autocomplete="off"> *@
+                    
+                    @* <select class="form-control advancedAutoComplete" name="simple_select"
+                    placeholder="type to search..."
+                    data-url="testdata/test-select-simple.json" autocomplete="off"></select> *@
+            <input type="hidden" id="CustomerHiddenId" name="CustomerId" />
+            <span asp-validation-for="CustomerId" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-3">
+            <label asp-for="IssueDate" class="control-label"></label>
+            <input asp-for="IssueDate" type="date" class="form-control" />
+            <span asp-validation-for="IssueDate" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-3">
+            <label asp-for="DueDate" class="control-label"></label>
+            <input asp-for="DueDate" type="date" class="form-control" />
+            <span asp-validation-for="DueDate" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-3">
+            <label asp-for="InvoiceNumber" class="control-label"></label>
+            <input asp-for="InvoiceNumber" class="form-control" />
+            <span asp-validation-for="InvoiceNumber" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-3">
+            <label asp-for="Reference" class="control-label"></label>
+            <input asp-for="Reference" class="form-control" />
+            <span asp-validation-for="Reference" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-3">
+            <label asp-for="PaymentType" class="control-label"></label>
+            <input asp-for="PaymentType" class="form-control" />
+            <span asp-validation-for="PaymentType" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-3">
+            <label asp-for="Currency" class="control-label"></label>
+            <input asp-for="Currency" class="form-control" />
+            <span asp-validation-for="Currency" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-3">
+            <label asp-for="AmountTaxType" class="control-label"></label>
+            <input asp-for="AmountTaxType" class="form-control" />
+            <span asp-validation-for="AmountTaxType" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-3">
+            <label asp-for="Items" class="control-label"></label>
+            <textarea asp-for="Items" class="form-control"></textarea>
+            <span asp-validation-for="Items" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-3">
+            <label asp-for="Attachment" class="control-label"></label>
+            <input asp-for="Attachment" type="file" multiple class="form-control" />
+            <span asp-validation-for="Attachment" class="text-danger"></span>
+        </div>
+    </div>
+    <table class="table" id="itemTable" border="1">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Track Inventory</th>
+                <th>Add to Purchase</th>
+                <th>Add to Sell</th>
+                <th>Sale Price</th>
+                <th>Sale Account</th>
+                <th>Tax Rate</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="text" name="code[]"></td>
+                <td><input type="text" name="name[]"></td>
+                <td><input type="checkbox" name="trackInventory[]"></td>
+                <td><input type="checkbox" name="addToPurchase[]"></td>
+                <td><input type="checkbox" name="addToSell[]"></td>
+                <td><input type="number" name="salePrice[]" step="0.01"></td>
+                <td><input type="number" name="saleAccount[]"></td>
+                <td><input type="text" name="taxRate[]"></td>
+                <td><input type="text" name="description[]"></td>
+                <td><button type="button" class="addRow">Add</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+@if(ViewBag.Invoices is not null)
+{
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Customer Name</th>
+                    <th>Invoice Number</th>
+                    <th>Reference</th>
+                    <th>Payment Type</th>
+                    <th>Currency</th>
+                    <th>TaxType</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var invoice in ViewBag.Invoices)
+                {
+                    <tr>
+                        <td>@invoice.Id</td>
+                        <td>@invoice.CustomerId</td>
+                        <td>@invoice.InvoiceNumber</td>
+                        <td>@invoice.Reference</td>
+                        <td>@invoice.PaymentType</td>
+                        <td>@invoice.Currency</td>
+                        <td>@invoice.AmountTaxType</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div>No Data found for invoice</div>
+}
+
+<!-- Customer Modal -->
+<div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-labelledby="customerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerModalLabel">New Customer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="newCustomerForm">
+                    <div class="form-group">
+                        <label for="contactName">Contact Name</label>
+                        <input type="text" class="form-control" id="contactName" disabled required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="billingLine">Billing Address Line</label>
+                        <input type="text" class="form-control" id="billingLine">
+                    </div>
+                    <div class="form-group">
+                        <label for="billingCity">Billing City</label>
+                        <input type="text" class="form-control" id="billingCity">
+                    </div>
+                    <div class="form-group">
+                        <label for="billingRegion">Billing Region</label>
+                        <input type="text" class="form-control" id="billingRegion">
+                    </div>
+                    <div class="form-group">
+                        <label for="billingPostalCode">Billing Postal Code</label>
+                        <input type="text" class="form-control" id="billingPostalCode">
+                    </div>
+                    <div class="form-group">
+                        <label for="billingCountry">Billing Country</label>
+                        <input type="text" class="form-control" id="billingCountry">
+                    </div>
+                    <div class="form-group">
+                        <label for="deliveryLine">Delivery Address Line</label>
+                        <input type="text" class="form-control" id="deliveryLine">
+                    </div>
+                    <div class="form-group">
+                        <label for="deliveryCity">Delivery City</label>
+                        <input type="text" class="form-control" id="deliveryCity">
+                    </div>
+                    <div class="form-group">
+                        <label for="deliveryRegion">Delivery Region</label>
+                        <input type="text" class="form-control" id="deliveryRegion">
+                    </div>
+                    <div class="form-group">
+                        <label for="deliveryPostalCode">Delivery Postal Code</label>
+                        <input type="text" class="form-control" id="deliveryPostalCode">
+                    </div>
+                    <div class="form-group">
+                        <label for="deliveryCountry">Delivery Country</label>
+                        <input type="text" class="form-control" id="deliveryCountry">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveCustomerBtn">Save Customer</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@master/dist/latest/bootstrap-autocomplete.min.js"></script>
+<script>$('.basicAutoSelect').autoComplete();</script>
+
+<script src="~/js/customer.js"></script>
+<script src="~/js/invoice.js"></script>
+<script src="~/js/item.js"></script>
+<script src="~/js/site.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.close').click(function () {
+            $('#customerModal').modal('hide');
+        });
+        const $autocompleteInput = $('#autocompleteInput');
+        const $dropdownMenu = $('#dropdown-menu');
+
+        // Make the event handler async to use await
+        $autocompleteInput.on('input', async function () {
+            const query = $(this).val().toLowerCase();
+            $dropdownMenu.empty().hide();
+
+            if (query) {
+                let matches = await fetchCustomers(query); // Fetch matches from the server
+
+                if (matches.length === 0) {
+                    $dropdownMenu.append(`<a href="#" class="customer-dropdown-new dropdown-item" data-id="">${query}</a>`).show();
+                } else {
+                    matches.forEach(match => {
+                        $dropdownMenu.append(`<a href="#" class="customer-dropdown dropdown-item" data-id="${match.id}">${match.contactName}</a>`).show();
+                    });
+                }
+            }
+        });
+        $dropdownMenu.on('click', '.customer-dropdown', function (e) {
+            e.preventDefault();
+            const selectedItem = $(this).text();
+            const selectedValue = $(this).data("id");
+            console.log($(this).data("id"));
+            $autocompleteInput.val(selectedItem);
+            $('#CustomerHiddenId').val(selectedValue);
+            $dropdownMenu.empty().hide();
+        });
+        $dropdownMenu.on('click', '.customer-dropdown-new', function (e) {
+            e.preventDefault();
+            const selectedItem = $(this).text();
+            $autocompleteInput.val(selectedItem);
+            $('#contactName').val(selectedItem);
+            $('#customerModal').modal('show');
+            
+            $dropdownMenu.empty().hide();
+        });
+    });
+
+    $(document).on('click', '.addRow', function () {
+        let newRow = `<tr>
+                <td><input type="text" name="code[]"></td>
+                <td><input type="text" name="name[]"></td>
+                <td><input type="checkbox" name="trackInventory[]"></td>
+                <td><input type="checkbox" name="addToPurchase[]"></td>
+                <td><input type="checkbox" name="addToSell[]"></td>
+                <td><input type="number" name="salePrice[]" step="0.01"></td>
+                <td><input type="number" name="saleAccount[]"></td>
+                <td><input type="text" name="taxRate[]"></td>
+                <td><input type="text" name="description[]"></td>
+                <td><button type="button" class="addRow">Add</button></td>
+            </tr>`;
+        $('#itemTable tbody').append(newRow);
+    });
+
+    // Optional: Function to remove a row
+    $(document).on('click', '.removeRow', function () {
+        $(this).closest('tr').remove();
+    });
+</script>
