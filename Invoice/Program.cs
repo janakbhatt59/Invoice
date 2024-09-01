@@ -8,6 +8,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<CustomerStore>();
 builder.Services.AddSingleton<ItemStore>();
 builder.Services.AddSingleton<InvoiceStore>();
+builder.Services.AddSingleton<InvoiceItemStore>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

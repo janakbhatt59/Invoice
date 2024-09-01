@@ -16,16 +16,8 @@
 
         <div class="form-group col-3">
             <label asp-for="CustomerId" class="control-label">Customer</label>
-            <input asp-for="CustomerId" type="text" id="autocompleteInput" class="form-control" placeholder="Customer Name">
+            <input type="text" id="autocompleteInput" class="form-control" placeholder="Customer Name">
             <div id="dropdown-menu" class="dropdown-menu"></div>
-
-          @*   <input class="form-control basicAutoComplete" type="text"
-                   data-url="api/customer/search?term=${encodeURIComponent(qry.term)"
-                   autocomplete="off"> *@
-                    
-                    @* <select class="form-control advancedAutoComplete" name="simple_select"
-                    placeholder="type to search..."
-                    data-url="testdata/test-select-simple.json" autocomplete="off"></select> *@
             <input type="hidden" id="CustomerHiddenId" name="CustomerId" />
             <span asp-validation-for="CustomerId" class="text-danger"></span>
         </div>
@@ -56,13 +48,20 @@
 
         <div class="form-group col-3">
             <label asp-for="PaymentType" class="control-label"></label>
-            <input asp-for="PaymentType" class="form-control" />
+            <select asp-for="PaymentType" class="form-control" >
+                <option value="Esewa">Esewa</option>
+                <option value="IME">IMEPay</option>
+            </select>
             <span asp-validation-for="PaymentType" class="text-danger"></span>
         </div>
 
         <div class="form-group col-3">
             <label asp-for="Currency" class="control-label"></label>
-            <input asp-for="Currency" class="form-control" />
+            <select asp-for="Currency" class="form-control" >
+                <option value="NS">Nepalese</option>
+                <option value="INR">Indian</option>
+                <option value="DOLLAR">Dollar</option>
+            </select>
             <span asp-validation-for="Currency" class="text-danger"></span>
         </div>
 
@@ -71,52 +70,71 @@
             <input asp-for="AmountTaxType" class="form-control" />
             <span asp-validation-for="AmountTaxType" class="text-danger"></span>
         </div>
-
-        <div class="form-group col-3">
-            <label asp-for="Items" class="control-label"></label>
-            <textarea asp-for="Items" class="form-control"></textarea>
-            <span asp-validation-for="Items" class="text-danger"></span>
-        </div>
-
-        <div class="form-group col-3">
-            <label asp-for="Attachment" class="control-label"></label>
-            <input asp-for="Attachment" type="file" multiple class="form-control" />
-            <span asp-validation-for="Attachment" class="text-danger"></span>
-        </div>
     </div>
-    <table class="table" id="itemTable" border="1">
-        <thead>
+    <div class="table-responsive">
+        <table class="table table-bordered table-sm" id="itemTable">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Description</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Account</th>
+                    <th>Tax Rate</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="invoiceItemRows">
+                <tr data-row-index="0">
+                    <td><input type="text" class="form-control" name="InvoiceItems[0].ItemName" /></td>
+                    <td><input type="text" class="form-control" name="InvoiceItems[0].Description" /></td>
+                    <td><input type="number" class="form-control" name="InvoiceItems[0].Quantity" /></td>
+                    <td><input type="number" class="form-control" name="InvoiceItems[0].Price" step="0.01" /></td>
+                    <td><input type="text" class="form-control" name="InvoiceItems[0].AccountTypeName" /></td>
+                    <td><input type="number" class="form-control" name="InvoiceItems[0].TaxRateName" step="0.01" /></td>
+                    <td><input type="number" class="form-control" name="InvoiceItems[0].Amount" step="0.01" /></td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-primary addRow m-1 form-control">+</button>
+                            <button type="button" class="btn btn-sm btn-danger removeRow m-1 form-control">-</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<div class="row">
+    <div class="col-9">
+            <div class="form-group col-3">
+                <label asp-for="Attachment" class="control-label"></label>
+                <input asp-for="Attachment" type="file" multiple class="form-control" />
+                <span asp-validation-for="Attachment" class="text-danger"></span>
+            </div>
+    </div>
+    <div class="col-3">
+        <table>
             <tr>
-                <th>Code</th>
-                <th>Name</th>
-                <th>Track Inventory</th>
-                <th>Add to Purchase</th>
-                <th>Add to Sell</th>
-                <th>Sale Price</th>
-                <th>Sale Account</th>
-                <th>Tax Rate</th>
-                <th>Description</th>
-                <th>Action</th>
+                <td width="100%">Sub Total</td>
+                <td id="subtotal">0.00</td>
             </tr>
-        </thead>
-        <tbody>
             <tr>
-                <td><input type="text" name="code[]"></td>
-                <td><input type="text" name="name[]"></td>
-                <td><input type="checkbox" name="trackInventory[]"></td>
-                <td><input type="checkbox" name="addToPurchase[]"></td>
-                <td><input type="checkbox" name="addToSell[]"></td>
-                <td><input type="number" name="salePrice[]" step="0.01"></td>
-                <td><input type="number" name="saleAccount[]"></td>
-                <td><input type="text" name="taxRate[]"></td>
-                <td><input type="text" name="description[]"></td>
-                <td><button type="button" class="addRow">Add</button></td>
+                <td>Total Tax</td>
+                <td>0.00</td>
             </tr>
-        </tbody>
-    </table>
-
-    <button type="submit" class="btn btn-primary">Submit</button>
+            <tr>
+                <td>Total</td>
+                <th class="fw-bold" id="total">0.00</th>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="justify-content-end">
+    <button type="submit" class="btn btn-primary">Submit Invoice</button>
+</div>
 </form>
+<hr />
+<h2>Invoice List</h2>
 @if(ViewBag.Invoices is not null)
 {
     <div>
@@ -130,6 +148,7 @@
                     <th>Payment Type</th>
                     <th>Currency</th>
                     <th>TaxType</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -143,6 +162,7 @@
                         <td>@invoice.PaymentType</td>
                         <td>@invoice.Currency</td>
                         <td>@invoice.AmountTaxType</td>
+                        <td><a asp-action="pdfStatement" asp-route-InvoiceId="@invoice.Id"> Print</a></td>
                     </tr>
                 }
             </tbody>
@@ -277,24 +297,82 @@ else
         });
     });
 
-    $(document).on('click', '.addRow', function () {
-        let newRow = `<tr>
-                <td><input type="text" name="code[]"></td>
-                <td><input type="text" name="name[]"></td>
-                <td><input type="checkbox" name="trackInventory[]"></td>
-                <td><input type="checkbox" name="addToPurchase[]"></td>
-                <td><input type="checkbox" name="addToSell[]"></td>
-                <td><input type="number" name="salePrice[]" step="0.01"></td>
-                <td><input type="number" name="saleAccount[]"></td>
-                <td><input type="text" name="taxRate[]"></td>
-                <td><input type="text" name="description[]"></td>
-                <td><button type="button" class="addRow">Add</button></td>
-            </tr>`;
-        $('#itemTable tbody').append(newRow);
-    });
+    $(document).ready(function () {
+        var rowIndex = 1; // Start index for new rows
 
-    // Optional: Function to remove a row
-    $(document).on('click', '.removeRow', function () {
-        $(this).closest('tr').remove();
+        function updateRemoveButtons() {
+            $('#invoiceItemRows tr').each(function () {
+                var rowsCount = $('#invoiceItemRows tr').length;
+                var $removeButton = $(this).find('.removeRow');
+                if (rowsCount > 1) {
+                    $removeButton.show();
+                } else {
+                    $removeButton.hide();
+                }
+            });
+        }
+        function updateSummary() {
+            var subTotal = 0;
+            var totalTax = 0;
+
+            $('#invoiceItemRows tr').each(function () {
+                var quantity = parseFloat($(this).find('input[name$=".Quantity"]').val()) || 0;
+                var price = parseFloat($(this).find('input[name$=".Price"]').val()) || 0;
+                var taxRate = parseFloat($(this).find('input[name$=".TaxRateName"]').val()) || 0;
+
+                var amount = quantity * price;
+                var taxAmount = amount * (taxRate / 100);
+
+                $(this).find('input[name$=".Amount"]').val(amount.toFixed(2));
+
+                subTotal += amount;
+                totalTax += taxAmount;
+            });
+
+            var total = subTotal + totalTax;
+
+            $('#subtotal').text(subTotal.toFixed(2));
+            $('#totalTax').text(totalTax.toFixed(2));
+            $('#total').text(total.toFixed(2));
+        }
+
+        $('#invoiceItemRows').on('input', 'input', function () {
+            updateSummary();
+        });
+
+        $('#invoiceItemRows').on('click', '.addRow', function () {
+            var currentRow = $(this).closest('tr');
+            var newRow = `
+                    <tr data-row-index="${rowIndex}">
+                        <td><input type="text" class="form-control" name="InvoiceItems[${rowIndex}].ItemName" /></td>
+                        <td><input type="text" class="form-control" name="InvoiceItems[${rowIndex}].Description" /></td>
+                        <td><input type="number" class="form-control" name="InvoiceItems[${rowIndex}].Quantity" /></td>
+                        <td><input type="number" class="form-control" name="InvoiceItems[${rowIndex}].Price" step="0.01" /></td>
+                        <td><input type="text" class="form-control" name="InvoiceItems[${rowIndex}].AccountTypeName" /></td>
+                        <td><input type="number" class="form-control" name="InvoiceItems[${rowIndex}].TaxRateName" step="0.01" /></td>
+                        <td><input type="number" class="form-control" name="InvoiceItems[${rowIndex}].Amount" step="0.01" /></td>
+                        <td>
+                            <div class="btn-group">
+                            <button type="button" class="btn btn-primary btn-sm addRow m-1 form-control">+</button>
+                            <button type="button" class="btn btn-danger btn-sm removeRow m-1 form-control">-</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            currentRow.after(newRow);
+            rowIndex++;
+            updateRemoveButtons();
+        });
+
+
+        $('#invoiceItemRows').on('click', '.removeRow', function () {
+            var rowsCount = $('#invoiceItemRows tr').length;
+            if (rowsCount > 1) {
+                $(this).closest('tr').remove();
+                updateRemoveButtons();
+            }
+        });
+
+        updateRemoveButtons(); // Initial check
     });
 </script>

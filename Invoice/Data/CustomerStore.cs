@@ -8,13 +8,14 @@ namespace Invoice.Data
         private static readonly CustomerStore _instance = new CustomerStore();
         private List<Customer> _customers = new List<Customer>();
         public static CustomerStore Instance => _instance;
-
+        private int _nextId = 0;
         public List<Customer> GetCustomers() => _customers;
 
         public Customer GetCustomer(int id) => _customers.SingleOrDefault(c => c.Id == id);
 
         public void AddCustomer(Customer customer)
         {
+            customer.Id = ++_nextId;
             _customers.Add(customer);
         }
 

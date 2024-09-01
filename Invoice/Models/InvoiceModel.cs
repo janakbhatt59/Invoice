@@ -11,7 +11,6 @@
         public string PaymentType { get; set; }
         public string Currency {  get; set; }
         public string AmountTaxType { get; set; }
-        public List<int> Items { get; set; }
         public List<IFormFile> Attachment { get; set; }
         public decimal SubTotal { get; set; }
         public decimal Total { get; set; }

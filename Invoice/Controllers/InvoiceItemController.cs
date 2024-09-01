@@ -7,11 +7,11 @@ namespace Invoice.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ItemController : ControllerBase
+    public class InvoiceItemController : ControllerBase
     {
-        private readonly ItemStore _store;
+        private readonly InvoiceItemStore _store;
 
-        public ItemController(ItemStore store)
+        public InvoiceItemController(InvoiceItemStore store)
         {
             _store = store;
         }
@@ -22,14 +22,14 @@ namespace Invoice.Controllers
         {
             return Ok(_store.GetItems());
         }
-        [HttpGet("search")]
-        public IActionResult SearchItems(string term)
-        {
-            var items = _store.SearchItems(term);
-            return Ok(items);
-        }
+        //[HttpGet("search")]
+        //public IActionResult SearchItems(string term)
+        //{
+        //    var items = _store.SearchItems(term);
+        //    return Ok(items);
+        //}
 
-            // GET: api/Item/5
+        // GET: api/Item/5
         [HttpGet("{id}")]
         public ActionResult<Item> GetItem(int id)
         {
@@ -43,7 +43,7 @@ namespace Invoice.Controllers
 
         // POST: api/Item
         [HttpPost]
-        public ActionResult<Item> PostItem(Item Item)
+        public ActionResult<Item> PostItem(InvoiceItem Item)
         {
             _store.AddItem(Item);
             return CreatedAtAction(nameof(GetItem), new { id = Item.Id }, Item);
@@ -51,7 +51,7 @@ namespace Invoice.Controllers
 
         // PUT: api/Item/5
         [HttpPut("{id}")]
-        public IActionResult PutItem(int id, Item Item)
+        public IActionResult PutItem(int id, InvoiceItem Item)
         {
             if (id != Item.Id)
             {

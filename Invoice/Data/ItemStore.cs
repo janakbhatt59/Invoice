@@ -6,7 +6,7 @@ namespace Invoice.Data
     {
         private static readonly ItemStore _instance = new ItemStore();
         private List<Item> _item = new List<Item>();
-
+        private int _nextId = 0;
 
 
         public static ItemStore Instance => _instance;
@@ -17,6 +17,7 @@ namespace Invoice.Data
 
         public void AddItem(Item customer)
         {
+            customer.Id = _nextId++;
             _item.Add(customer);
         }
 
@@ -36,6 +37,12 @@ namespace Invoice.Data
             {
                 _item.Remove(customer);
             }
+        }
+        public List<Item> SearchItems(string term)
+        {
+            return _item
+                .Where(c => c.Name.Contains(term, StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Invoice.Data
     {
         private static readonly InvoiceStore _instance = new InvoiceStore();
         private List<InvoiceModel> _InvoiceModel = new List<InvoiceModel>();
-
+        private int _nextId = 0;
 
 
         public static InvoiceStore Instance => _instance;
@@ -15,9 +15,11 @@ namespace Invoice.Data
 
         public InvoiceModel GetInvoiceModel(int id) => _InvoiceModel.SingleOrDefault(c => c.Id == id);
 
-        public void AddInvoiceModel(InvoiceModel customer)
+        public int AddInvoiceModel(InvoiceModel customer)
         {
+            customer.Id = _nextId++;
             _InvoiceModel.Add(customer);
+            return customer.Id;
         }
 
         public void UpdateInvoiceModel(InvoiceModel customer)
